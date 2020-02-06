@@ -82,8 +82,8 @@ class Details extends React.Component {
     else {
       return(
         <View>
-        <Text>1.{this.props.result['prediction_classes'][0]}</Text>
-        <Text>Probability: {this.props.result['prediction_probs'][0]}</Text>
+        <Text style={{fontSize: 18}}>1.{this.props.result['prediction_classes'][0]}</Text>
+        <Text style={{fontSize: 18}}>Probability: {this.props.result['prediction_probs'][0]}</Text>
         <Text>2.{this.props.result['prediction_classes'][1]}</Text>
         <Text>Probability: {this.props.result['prediction_probs'][1]}</Text>
         <Text>3.{this.props.result['prediction_classes'][2]}</Text>
