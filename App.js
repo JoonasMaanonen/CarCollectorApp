@@ -1,14 +1,33 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity, Button, Image} from 'react-native';
+import { Text, View, TouchableOpacity, Button, Image, StyleSheet} from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import axios from 'axios'
 
+
+const styles = StyleSheet.create({
+  bigTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
+    paddingHorizontal: 15,
+  },
+  bigResult: {
+    fontWeight: 'bold',
+    textAlign: 'left',
+    paddingHorizontal: 15,
+  },
+  smallResult: {
+    textAlign: 'left',
+    paddingHorizontal: 15,
+  },
+});
+
 class HomeScreen extends Component {
   render() {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{ flex: 2, justifyContent: "center", alignItems: "center" }}>
         <RNCamera
           ref={ref => {
             this.camera = ref;
@@ -21,7 +40,7 @@ class HomeScreen extends Component {
           captureAudio={false}
         >
         </RNCamera>
-        <View style={{height: '10%',flex: 0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{height: '10%',flex: 0, flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
           <TouchableOpacity onPress={this.takePicture.bind(this)}>
             <Text style={{
               fontSize: 25,
@@ -58,7 +77,7 @@ class ResultScreen extends React.Component {
         });
     }
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+      <View style={{ flex: 3, alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
         <Image style={{
 								 width: '100%',
 								 height: '70%'}}
@@ -81,13 +100,25 @@ class Details extends React.Component {
     }
     else {
       return(
-        <View>
-        <Text style={{fontSize: 18}}>1.{this.props.result['prediction_classes'][0]}</Text>
-        <Text style={{fontSize: 18}}>Probability: {this.props.result['prediction_probs'][0]}</Text>
-        <Text>2.{this.props.result['prediction_classes'][1]}</Text>
-        <Text>Probability: {this.props.result['prediction_probs'][1]}</Text>
-        <Text>3.{this.props.result['prediction_classes'][2]}</Text>
-        <Text>Probability: {this.props.result['prediction_probs'][2]}</Text>
+        <View style={{ flex: 2, flexDirection: 'row',justifyContent: 'space-between'}}>
+          <View>
+            <Text style={styles.bigTitle}>Brand Predictor</Text>
+            <Text style={styles.bigResult}>1.{this.props.result['brand_classes'][0]}</Text>
+            <Text style={styles.bigResult}>Probability: {parseFloat(this.props.result['brand_probs'][0]).toFixed(2)}</Text>
+            <Text style={styles.smallResult}>2.{this.props.result['brand_classes'][1]}</Text>
+            <Text style={styles.smallResult}>Probability: {parseFloat(this.props.result['brand_probs'][1]).toFixed(2)}</Text>
+            <Text style={styles.smallResult}>3.{this.props.result['brand_classes'][2]}</Text>
+            <Text style={styles.smallResult}>Probability: {parseFloat(this.props.result['brand_probs'][2]).toFixed(2)}</Text>
+          </View>
+          <View>
+            <Text style={styles.bigTitle}>Model Predictor</Text>
+            <Text style={styles.bigResult}>1.{this.props.result['model_classes'][0]}</Text>
+            <Text style={styles.bigResult}>Probability: {parseFloat(this.props.result['model_probs'][0]).toFixed(2)}</Text>
+            <Text style={styles.smallResult}>2.{this.props.result['model_classes'][1]}</Text>
+            <Text style={styles.smallResult}>Probability: {parseFloat(this.props.result['model_probs'][1]).toFixed(2)}</Text>
+            <Text style={styles.smallResult}>3.{this.props.result['model_classes'][2]}</Text>
+            <Text style={styles.smallResult}>Probability: {parseFloat(this.props.result['model_probs'][2]).toFixed(2)}</Text>
+          </View>
         </View>
       )
     }
