@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity, Button, Image, StyleSheet} from 'react-native';
+import { Text, View, TouchableOpacity, Button, Image, StyleSheet, ImageEditor} from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import axios from 'axios'
-
+import base64 from 'react-native-base64'
+import {SECRET_KEY, API_URL} from 'react-native-dotenv'
 
 const styles = StyleSheet.create({
   bigTitle: {
@@ -25,6 +26,14 @@ const styles = StyleSheet.create({
 });
 
 class HomeScreen extends Component {
+  state = {zoom: 0};
+  zoomIn(amount) {
+    this.setState({zoom: Math.min(0.15, this.state.zoom+amount)});
+  }
+
+  zoomOut(amount) {
+    this.setState({zoom: Math.max(0, this.state.zoom-amount)});
+  }
   render() {
     return (
       <View style={{ flex: 2, justifyContent: "center", alignItems: "center" }}>
@@ -35,18 +44,36 @@ class HomeScreen extends Component {
           style={{
             flex: 1,
             width: '100%',
-            height: '70%',
+            height: '85%',
           }}
           captureAudio={false}
+          zoom={this.state.zoom}
+          defaultVideoQuality={RNCamera.Constants.VideoQuality['4:3']}
         >
         </RNCamera>
-        <View style={{height: '10%',flex: 0, flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{height: '15%',flex:   0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+          <TouchableOpacity onPress={() => this.zoomIn(0.01)}>
+            <Text style={{
+              fontSize: 20,
+              paddingHorizontal: 15,
+            }}
+            >Zoom (+)</Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={this.takePicture.bind(this)}>
             <Text style={{
-              fontSize: 25,
+              fontSize: 20,
+              paddingHorizontal: 15,
             }}
             >Take a picture</Text>
           </TouchableOpacity>
+          <TouchableOpacity onPress={() => this.zoomOut(0.01)}>
+            <Text style={{
+              fontSize: 20,
+              paddingHorizontal: 15,
+            }}
+            >Zoom (-)</Text>
+          </TouchableOpacity>
+
         </View>
       </View>
     );
@@ -54,9 +81,11 @@ class HomeScreen extends Component {
 
   takePicture = async() => {
     if (this.camera){
-      const options = {quality: 0.5, base64: true};
+      const options = {quality: 1,
+                       base64: true,
+                       doNotSave: true};
       const image = await this.camera.takePictureAsync(options);
-      this.props.navigation.navigate('Results', {img: image});
+      this.props.navigation.navigate('Results', {img: image.base64});
     }
   }
 }
@@ -65,9 +94,15 @@ class ResultScreen extends React.Component {
   state = {showResults: false,
            result: 'Loading the results...'};
   render() {
-    const url = 'https://carcollectorbackend.onrender.com/predict';
     if(!this.state.showResults){
-      axios.post(url, this.props.navigation.state.params.img.base64)
+      var encoded = base64.encode(SECRET_KEY);
+      axios.post(API_URL,
+        this.props.navigation.state.params.img,
+        {
+        headers: {
+          'Authorization': encoded
+        },
+        })
         .then((response) => {
           console.log(response.data);
           this.setState({ showResults: true, result: response.data })
@@ -78,10 +113,10 @@ class ResultScreen extends React.Component {
     }
     return (
       <View style={{ flex: 3, alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-        <Image style={{
-								 width: '100%',
-								 height: '70%'}}
-							   source={{uri: this.props.navigation.state.params.img.uri}}/>
+       <Image style={{
+                 width: '100%',
+                 height: '70%'}}
+                 source={{uri: `data:image/jpg;base64,${this.props.navigation.state.params.img}`}}/>
         <Details flag={this.state.showResults} result={this.state.result}/>
         <Button
           title='Go back'
