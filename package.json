@@ -19,6 +19,7 @@
     "react-native-camera": "^3.16.0",
     "react-native-dotenv": "^0.2.0",
     "react-native-gesture-handler": "^1.5.6",
+    "react-native-image-crop-picker": "^0.28.0",
     "react-native-reanimated": "^1.7.0",
     "react-native-safe-area-context": "^0.6.4",
     "react-native-screens": "^2.0.0-beta.1",
