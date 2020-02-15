@@ -7,6 +7,13 @@ While I have some Machine learning experience from Kaggle competitions, this doe
 I chose a mobile application as this would allow me to test my application in the real world, which was very motivating and fun. It also helps to develop an intuition about what features
 neural networks actually learn, since you can take multiple pictures of the same object from different angles and see how it affects the prediction accuracy. 
 
+## What I did in the project
+    - Collected a dataset of car images via Google search and crawling nettiauto.com.
+    - Trained a ResNet50 model to predict the model of the car.
+    - Created a REST API to serve this deep learning model.
+    - Served this API inside a docker container in render.com
+    - Created a mobile app with react native, which can be used to take photos of cars and predict the cars' model.
+
 ## What I learned during the project
 First time I trained the model and got very nice validation accuracy and was excited about going to try my app in the real world. To my dissapointment it did not work at all and I started to wonder why. I tried tuning bunch things in the deep learning side but then realized that I had
 not once checked how the image looks like before the model does inference on it.

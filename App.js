@@ -6,9 +6,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import axios from 'axios'
 import base64 from 'react-native-base64'
 import {SECRET_KEY, API_URL} from 'react-native-dotenv'
-import ImageEditor from "@react-native-community/image-editor";
-import RNFetchBlob from 'react-native-fetch-blob'
-
+import ImagePicker from 'react-native-image-crop-picker';
 
 const styles = StyleSheet.create({
   bigTitle: {
@@ -29,14 +27,6 @@ const styles = StyleSheet.create({
 });
 
 class HomeScreen extends Component {
-  state = {zoom: 0};
-  zoomIn(amount) {
-    this.setState({zoom: Math.min(0.15, this.state.zoom+amount)});
-  }
-
-  zoomOut(amount) {
-    this.setState({zoom: Math.max(0, this.state.zoom-amount)});
-  }
   render() {
     return (
       <View style={{ flex: 2, justifyContent: "center", alignItems: "center" }}>
@@ -47,36 +37,23 @@ class HomeScreen extends Component {
           style={{
             flex: 1,
             width: '100%',
-            height: '85%',
+            height: '70%',
           }}
           captureAudio={false}
-          zoom={this.state.zoom}
-          defaultVideoQuality={RNCamera.Constants.VideoQuality['4:3']}
         >
         </RNCamera>
-        <View style={{height: '15%',flex:   0, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-          <TouchableOpacity onPress={() => this.zoomIn(0.01)}>
-            <Text style={{
-              fontSize: 20,
-              paddingHorizontal: 15,
-            }}
-            >Zoom (+)</Text>
-          </TouchableOpacity>
+        <View style={{
+          height: '10%',
+          flex: 0,
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center'}}>
           <TouchableOpacity onPress={this.takePicture.bind(this)}>
             <Text style={{
               fontSize: 20,
-              paddingHorizontal: 15,
             }}
             >Take a picture</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.zoomOut(0.01)}>
-            <Text style={{
-              fontSize: 20,
-              paddingHorizontal: 15,
-            }}
-            >Zoom (-)</Text>
-          </TouchableOpacity>
-
         </View>
       </View>
     );
@@ -87,24 +64,14 @@ class HomeScreen extends Component {
       const options = {quality: 1,
                        base64: true};
       const capturedImage = await this.camera.takePictureAsync(options);
-			console.log(capturedImage.width);
-			console.log(capturedImage.height);
-      const w = capturedImage.width;
-      const h = capturedImage.height;
-      const uri = capturedImage.uri;
-			const cropData = {
-				offset: {x: 0,
-								 y: h / 2 - w / 2,
-				},
-				size: {width: w, height: w,},
-				};
-			ImageEditor.cropImage(uri, cropData).then(url => {
-				console.log("Cropped image uri", url);
-				RNFetchBlob.fs.readFile(url, 'base64')
-				.then((data) => {
-					this.props.navigation.navigate('Results', {img: data});
-				})
-			})
+      ImagePicker.openCropper({
+              path: capturedImage.uri,
+                width: 224,
+                height: 224,
+                includeBase64: true
+          }).then(image => {
+              this.props.navigation.navigate('Results', {img: image.data});
+          });
     }
   }
 }
@@ -190,7 +157,6 @@ const AppNavigator = createStackNavigator(
 );
 
 const AppContainer = createAppContainer(AppNavigator);
-
 
 export default class App extends Component {
   render() {
