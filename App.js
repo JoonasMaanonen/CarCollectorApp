@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity, Button, Image, StyleSheet, ImageEditor} from 'react-native';
+import { Text, View, TouchableOpacity, Button, Image, StyleSheet} from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import axios from 'axios'
 import base64 from 'react-native-base64'
 import {SECRET_KEY, API_URL} from 'react-native-dotenv'
+import ImageEditor from "@react-native-community/image-editor";
+import RNFetchBlob from 'react-native-fetch-blob'
+
 
 const styles = StyleSheet.create({
   bigTitle: {
@@ -82,10 +85,26 @@ class HomeScreen extends Component {
   takePicture = async() => {
     if (this.camera){
       const options = {quality: 1,
-                       base64: true,
-                       doNotSave: true};
-      const image = await this.camera.takePictureAsync(options);
-      this.props.navigation.navigate('Results', {img: image.base64});
+                       base64: true};
+      const capturedImage = await this.camera.takePictureAsync(options);
+			console.log(capturedImage.width);
+			console.log(capturedImage.height);
+      const w = capturedImage.width;
+      const h = capturedImage.height;
+      const uri = capturedImage.uri;
+			const cropData = {
+				offset: {x: 0,
+								 y: h / 2 - w / 2,
+				},
+				size: {width: w, height: w,},
+				};
+			ImageEditor.cropImage(uri, cropData).then(url => {
+				console.log("Cropped image uri", url);
+				RNFetchBlob.fs.readFile(url, 'base64')
+				.then((data) => {
+					this.props.navigation.navigate('Results', {img: data});
+				})
+			})
     }
   }
 }
