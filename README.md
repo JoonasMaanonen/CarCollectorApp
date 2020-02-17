@@ -1,6 +1,8 @@
 # CarCollectorApp
 Detecting car model made easy with the help of deep learning.
 
+<img src='Example.png' width=250>
+
 [Backend](https://github.com/JoonasMaanonen/car_collector_backend)
 
 ## Why I did this project
