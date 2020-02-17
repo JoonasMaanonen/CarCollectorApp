@@ -1,9 +1,11 @@
 # CarCollectorApp
-Detecting car model made easy with the help of deep learning.
+Detecting cars' model and brand made easy with the help of deep learning.
 
 <img src='Example.png' width=250>
 
-[Backend](https://github.com/JoonasMaanonen/car_collector_backend)
+[Try out the first release here](https://github.com/JoonasMaanonen/CarCollectorApp/releases/tag/v.1.0)
+
+[Backend repository](https://github.com/JoonasMaanonen/car_collector_backend)
 
 ## Why I did this project
 While I have some Machine learning experience from Kaggle competitions, this does not teach you some of the crucial skills that are needed in real deep learning applications such as inference, collecting data, cleaning data and many more important skills.
@@ -13,7 +15,8 @@ neural networks actually learn, since you can take multiple pictures of the same
 
 ## What I did in the project
 - Collected a dataset of car images via Google search and crawling [autoscout24](https://www.autoscout24.com).
-- Trained a ResNet50 model to predict the model of the car.
+- Trained two Resnet50 models. One to predict cars' model and  one to predict its brand.
+    - Two models to investigate how different labels affect the features that the neural network learns.
 - Created a REST API to serve this deep learning model.
 - Served this API inside a docker container in render.com
 - Created a mobile app with react native, which can be used to take photos of cars and predict the cars' model.
